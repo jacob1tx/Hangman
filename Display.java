@@ -15,25 +15,21 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Display {
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static ScratchWork scratchWork;
     private static String targetWord;
 
     public static void main(String[] args) {
-        try {
-            targetWord = HangmanCLI.generateRandomWord();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        scratchWork = new ScratchWork(targetWord.length());
+        startNewGame();
 
+        // Object creation
         JFrame frame = new JFrame("Hangman, the Game");
         frame.setSize(400, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        JTextField textField = new JTextField(10);
-        textField.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+        JTextField inputTextField = new JTextField(10);
+        inputTextField.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 
         JPanel messagePanel = new JPanel();
         messagePanel.setLayout(new GridLayout(3, 1));
@@ -49,34 +45,58 @@ public class Display {
         incorrectGuessesTextField.setHorizontalAlignment(JTextField.CENTER);
         incorrectGuessesTextField.setEditable(false);
         incorrectGuessesTextField.setFocusable(false);
-
+        
+        // for debugging
         JTextField targetWordTextField = new JTextField(targetWord);
         targetWordTextField.setFont(new Font("Times New Roman", Font.PLAIN, 18));
         targetWordTextField.setHorizontalAlignment(JTextField.CENTER);
         targetWordTextField.setEditable(false);
         targetWordTextField.setFocusable(false);
 
+        JButton concedeButton = new JButton("Concede");
+        JButton guessButton = new JButton("Guess");
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        // Action Handlers
+
+        // Handle a guess
+        guessButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String inputText = inputTextField.getText();
+                handleGuess(inputText);
+                workspaceTextField.setText(updateWorkspace(scratchWork));
+                incorrectGuessesTextField.setText(updateIncorrectGuesses(scratchWork));
+                inputTextField.setText("");
+            }
+        });
+
+        // Handle a concession
+        concedeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gameOver();
+            }
+        });
+
+        // Handle an `enter` keypress
+        inputTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String inputText = inputTextField.getText();
+                handleGuess(inputText);
+                workspaceTextField.setText(updateWorkspace(scratchWork));
+                incorrectGuessesTextField.setText(updateIncorrectGuesses(scratchWork));
+                inputTextField.setText("");
+            }
+        });
+
+        // Field formatting
         messagePanel.add(workspaceTextField);
         messagePanel.add(incorrectGuessesTextField);
         if (DEBUG)
             messagePanel.add(targetWordTextField);
 
-        JButton guessButton = new JButton("Guess");
-        guessButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String inputText = textField.getText();
-                handleGuess(inputText);
-                workspaceTextField.setText(updateWorkspace(scratchWork));
-                incorrectGuessesTextField.setText(updateIncorrectGuesses(scratchWork));
-            }
-        });
-        JButton concedeButton = new JButton("Concede");
-
-
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-        bottomPanel.add(textField);
+        bottomPanel.add(inputTextField);
         bottomPanel.add(guessButton);
         bottomPanel.add(concedeButton);
 
@@ -89,7 +109,7 @@ public class Display {
 
     public static void handleGuess(String guessString) {
         if (!HangmanCLI.containsOnlyLetters(guessString)) {
-            JOptionPane.showMessageDialog(null, "Guesses can only contain letters", "Invalid Guess", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Guesses can only contain letters.", "Invalid Guess", JOptionPane.ERROR_MESSAGE);
             return;
         }
         // guessed a letter
@@ -114,6 +134,15 @@ public class Display {
         else {
             JOptionPane.showMessageDialog(null, "Guesses must be a single letter or the length of the word.", "Invalid Guess", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private static void startNewGame() {
+        try {
+            targetWord = HangmanCLI.generateRandomWord();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        scratchWork = new ScratchWork(targetWord.length());
     }
 
     private static String updateWorkspace(ScratchWork scratchWork) {
@@ -149,6 +178,12 @@ public class Display {
                 """, targetWord, scratchWork.getGuessCount(), scratchWork.getGuessCount() > 1 ? "es" : "",  
                 scratchWork.getIncorrectGuessCount(), scratchWork.getIncorrectGuessCount() == 1 ? "" : "s");
         JOptionPane.showMessageDialog(null, completeString, "Congratulations", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+    }
+
+    private static void gameOver() {
+        String concedeString = String.format("The word was %s.", targetWord);
+        JOptionPane.showMessageDialog(null, concedeString, "Game Over", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
     }
 }
