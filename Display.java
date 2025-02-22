@@ -1,7 +1,7 @@
 import javax.swing.JOptionPane;
 
 public class Display {
-    public static void main(String[] args) {
-        JOptionPane.showMessageDialog(null, "Hello, World!", "Test Message", JOptionPane.INFORMATION_MESSAGE);
+    public void printOnScreen(String message, String title) {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 }

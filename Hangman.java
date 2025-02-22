@@ -8,18 +8,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Hangman {
-
-    private static String welcomeString = """
-            ################################
-            ###### Welcome to Hangman ######
-            ################################
-            """;
                   
-    private static ScratchWork scratchWork;
-    private static String targetWord;
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    private ScratchWork scratchWork;
+    private String targetWord;
+    
+    public Hangman() {
         try {
             targetWord = generateRandomWord();
         } catch (IOException e) {
@@ -27,11 +20,13 @@ public class Hangman {
         }
         scratchWork = new ScratchWork(targetWord.length());
         
-        System.out.println(welcomeString);
         System.out.printf("Your word has %d letters.\n", targetWord.length());
+    }
 
+    public void play() {
+        Scanner scanner = new Scanner(System.in);
         while(true) {
-            prettyPrint();
+            prettyPrint(scratchWork);
             System.out.print("Try a letter, or guess the word: ");
             String guessString = scanner.nextLine().trim().toLowerCase();
 
@@ -41,6 +36,8 @@ public class Hangman {
 
             if (guessString.equals("concede")) {
                 System.out.printf("The word was %s.\n", targetWord);
+                scanner.close();
+                return;
             }
 
             if (!containsOnlyLetters(guessString)) {
@@ -52,7 +49,7 @@ public class Hangman {
             if (guessString.length() == 1) {
                 boolean isSolved = false;
                 try {
-                    isSolved = singleLetterGuess(guessString);
+                    isSolved = singleLetterGuess(guessString, scratchWork, targetWord);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -113,7 +110,7 @@ public class Hangman {
     }
 
     // Function to handle the guess of a single letter
-    private static boolean singleLetterGuess(String guessString) throws Exception {
+    private static boolean singleLetterGuess(String guessString, ScratchWork scratchWork, String targetWord) throws Exception {
         char letter = guessString.charAt(0);
         if (scratchWork.getAllGuesses().contains(letter)) // verify this has not been guessed
             throw new Exception("Invalid Guess: " + letter + " has already been guessed");
@@ -141,7 +138,7 @@ public class Hangman {
     }
 
     
-    private static void prettyPrint() {
+    private static void prettyPrint(ScratchWork scratchWork) {
         ArrayList<Character> correctList = scratchWork.getCorrectLetters();
         LinkedHashSet<Character> incorrectList = scratchWork.getIncorrectLetters();
         StringBuilder correctPrint = new StringBuilder();
