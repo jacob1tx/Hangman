@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Hangman {
+public class HangmanCLI {
                   
     private ScratchWork scratchWork;
     private String targetWord;
 
-    public Hangman() {
+    public HangmanCLI() {
         try {
             targetWord = generateRandomWord();
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class Hangman {
                 try {
                     isSolved = singleLetterGuess(guessString, scratchWork, targetWord);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    System.out.println("Invalid: " + e.getMessage());
                 }
                 if (isSolved)
                     break;
@@ -73,7 +73,7 @@ public class Hangman {
     }
 
     // The string is free of whitespace and already in lower case
-    private static boolean containsOnlyLetters(String guessString) {
+    public static boolean containsOnlyLetters(String guessString) {
         for (int i = 0; i < guessString.length(); i++) {
             char c = guessString.charAt(i);
             if (c < 'a' || c > 'z')
@@ -83,7 +83,7 @@ public class Hangman {
     }
     
     // Generate a word at random from the EOWL dictionary
-    private static String generateRandomWord() throws IOException {
+    public static String generateRandomWord() throws IOException {
         String filePath = "EOWL-v1.1.2\\EOWL-v1.1.2\\CSV Format\\";
 
         Random randInt = new Random();
@@ -107,10 +107,10 @@ public class Hangman {
     }
 
     // Function to handle the guess of a single letter
-    private static boolean singleLetterGuess(String guessString, ScratchWork scratchWork, String targetWord) throws Exception {
+    public static boolean singleLetterGuess(String guessString, ScratchWork scratchWork, String targetWord) throws Exception {
         char letter = guessString.charAt(0);
         if (scratchWork.getAllGuesses().contains(letter)) // verify this has not been guessed
-            throw new Exception("Invalid Guess: " + letter + " has already been guessed");
+            throw new Exception(letter + " has already been guessed");
         
         // Add to guess count
         scratchWork.setAllGueses(letter);

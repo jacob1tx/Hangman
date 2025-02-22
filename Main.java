@@ -22,12 +22,11 @@ public class Main {
                 System.exit(0);
             
             if (userChoiceString.equals("ui")) {
-                Display display = new Display();
-                display.printOnScreen("Welcome to Hangman", "Hangman, the Game");
+                Display.main(args);
             }
             else {
-                Hangman hangman = new Hangman();
-                hangman.play(scanner);
+                HangmanCLI hangmanCLI = new HangmanCLI();
+                hangmanCLI.play(scanner);
             }
         }
     }
