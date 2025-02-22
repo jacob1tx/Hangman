@@ -11,7 +11,7 @@ public class Hangman {
                   
     private ScratchWork scratchWork;
     private String targetWord;
-    
+
     public Hangman() {
         try {
             targetWord = generateRandomWord();
@@ -23,8 +23,7 @@ public class Hangman {
         System.out.printf("Your word has %d letters.\n", targetWord.length());
     }
 
-    public void play() {
-        Scanner scanner = new Scanner(System.in);
+    public void play(Scanner scanner) {
         while(true) {
             prettyPrint(scratchWork);
             System.out.print("Try a letter, or guess the word: ");
@@ -36,7 +35,6 @@ public class Hangman {
 
             if (guessString.equals("concede")) {
                 System.out.printf("The word was %s.\n", targetWord);
-                scanner.close();
                 return;
             }
 
@@ -68,7 +66,6 @@ public class Hangman {
             }
         }
         
-        scanner.close();
         System.out.printf("\nCongratulations! The word was %s.\n", targetWord);
         System.out.printf("You solved it in %d guess%s and made %d mistake%s.\n", 
             scratchWork.getGuessCount(), scratchWork.getGuessCount() > 1 ? "es" : "",  
