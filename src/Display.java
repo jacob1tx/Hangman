@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.concurrent.Flow;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,9 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 public class Display {
     private ScratchWork scratchWork;
