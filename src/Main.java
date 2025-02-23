@@ -9,8 +9,12 @@ public class Main {
 
             """;
 
-    
     public static void main(String[] args) {
+        Display display = new Display();
+        display.startNewGame();
+    }
+    
+    public static void legacy_main(String[] args) {
         System.out.println(welcomeString);
         Scanner scanner = new Scanner(System.in);
 
@@ -23,7 +27,8 @@ public class Main {
                 System.exit(0);
             
             if (userChoiceString.equals("ui")) {
-                Display.main(args);
+                Display display = new Display();
+                display.startNewGame();
             }
             else {
                 HangmanCLI hangmanCLI = new HangmanCLI();

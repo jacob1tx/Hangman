@@ -100,11 +100,11 @@ public class HangmanCLI {
             }
         }
         
-        String generateWord = "";
+        String randomWord = "";
         do {
-            generateWord = words.get(randInt.nextInt(words.size())); // generate a random word using the chosen starting letter
-        } while (generateWord.equals("exit") && generateWord.equals("concede")); // ensure generate word is not a command
-        return generateWord;
+            randomWord = words.get(randInt.nextInt(words.size())); // generate a random word using the chosen starting letter
+        } while (randomWord.equals("exit") && randomWord.equals("concede") && randomWord.length() < 4); // ensure generate word is not a command
+        return randomWord;
     }
 
     // Function to handle the guess of a single letter
