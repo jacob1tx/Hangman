@@ -103,7 +103,7 @@ public class HangmanCLI {
         String randomWord = "";
         do {
             randomWord = words.get(randInt.nextInt(words.size())); // generate a random word using the chosen starting letter
-        } while (randomWord.equals("exit") && randomWord.equals("concede") && randomWord.length() < 4); // ensure generate word is not a command
+        } while (randomWord.equals("exit") || randomWord.equals("concede") || randomWord.length() < 4); // ensure generate word is not a command
         return randomWord;
     }
 

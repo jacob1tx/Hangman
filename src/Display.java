@@ -1,5 +1,6 @@
 package src;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -8,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.concurrent.Flow;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class Display {
     private ScratchWork scratchWork;
@@ -97,15 +103,12 @@ public class Display {
     
             // Object creation
             frame = new JFrame("Hangman, the Game");
-            frame.setSize(400, difficulty == Difficulty.EASY ? 150 : 200);
+            frame.setSize(400, difficulty == Difficulty.EASY ? 150 : 300);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLayout(new BorderLayout());
     
             JTextField inputTextField = new JTextField(10);
             inputTextField.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-    
-            JPanel messagePanel = new JPanel();
-            messagePanel.setLayout(new GridLayout(3, 1));
     
             JLabel workspaceLabel = new JLabel(updateWorkspace(scratchWork));
             workspaceLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
@@ -118,10 +121,13 @@ public class Display {
             incorrectGuessesLabel.setFocusable(false);
 
             // for hard mode
-            JLabel remainingGuessCountLabel = new JLabel(String.valueOf(MAXGUESSES - scratchWork.getIncorrectGuessCount()));
-            remainingGuessCountLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-            remainingGuessCountLabel.setHorizontalAlignment(JTextField.CENTER);
-            remainingGuessCountLabel.setFocusable(false);
+            JTextPane hangmanDisplayText = new JTextPane();
+            hangmanDisplayText.setText(HangmanArt.HangmanArt[scratchWork.getIncorrectGuessCount()]);
+            hangmanDisplayText.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+            hangmanDisplayText.setBackground(new Color(0,0,0,0));
+            hangmanDisplayText.setFocusable(false);
+            hangmanDisplayText.setEditable(false);
+            hangmanDisplayText.setOpaque(false);
             
             // for debugging
             JLabel targetWordLabel = new JLabel(targetWord);
@@ -131,9 +137,13 @@ public class Display {
     
             JButton concedeButton = new JButton("Concede");
             JButton guessButton = new JButton("Guess");
+
+            JPanel messagePanel = new JPanel(new GridLayout(3, 1));
+
+            JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            centerPanel.add(hangmanDisplayText);
     
-            JPanel bottomPanel = new JPanel();
-            bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     
             // Action Handlers
     
@@ -146,7 +156,9 @@ public class Display {
                     incorrectGuessesLabel.setText(updateIncorrectGuesses(scratchWork));
                     inputTextField.setText("");
                     if (difficulty == Difficulty.HARD)
-                        remainingGuessCountLabel.setText(String.valueOf(MAXGUESSES - scratchWork.getIncorrectGuessCount()));
+                        hangmanDisplayText.setText(HangmanArt.HangmanArt[scratchWork.getIncorrectGuessCount()]);
+                    if (difficulty == Difficulty.HARD && scratchWork.getIncorrectGuessCount() >= MAXGUESSES) // out of guesses
+                        gameOver();
                 }
             });
     
@@ -159,7 +171,9 @@ public class Display {
                     incorrectGuessesLabel.setText(updateIncorrectGuesses(scratchWork));
                     inputTextField.setText("");
                     if (difficulty == Difficulty.HARD)
-                        remainingGuessCountLabel.setText(String.valueOf(MAXGUESSES - scratchWork.getIncorrectGuessCount()));
+                        hangmanDisplayText.setText(HangmanArt.HangmanArt[scratchWork.getIncorrectGuessCount()]);
+                    if (difficulty == Difficulty.HARD && scratchWork.getIncorrectGuessCount() >= MAXGUESSES) // out of guesses
+                        gameOver();
                 }
             });
  
@@ -183,7 +197,7 @@ public class Display {
             frame.add(messagePanel, BorderLayout.NORTH);
             frame.add(bottomPanel, BorderLayout.SOUTH);
             if (difficulty == Difficulty.HARD)
-                frame.add(remainingGuessCountLabel, BorderLayout.CENTER);
+                frame.add(centerPanel, BorderLayout.CENTER);
     
             frame.setLocationRelativeTo(null); // center the window
             frame.setVisible(true);
@@ -215,9 +229,6 @@ public class Display {
             }
             else
                 JOptionPane.showMessageDialog(null, "Guesses must be a single letter or the length of the word.", "Invalid Guess", JOptionPane.ERROR_MESSAGE);
-            
-            if (difficulty == Difficulty.HARD && scratchWork.getIncorrectGuessCount() >= MAXGUESSES) // out of guesses
-                gameOver();
     }
 
     private String updateWorkspace(ScratchWork scratchWork) {
@@ -257,7 +268,7 @@ public class Display {
     }
 
     private void gameOver() {
-        String concedeString = String.format("The word was %s.", targetWord);
+        String concedeString = String.format("The word was %s.\n%s", targetWord, HangmanArt.HangmanArt[6]);
         JOptionPane.showMessageDialog(null, concedeString, "Game Over", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
     }
